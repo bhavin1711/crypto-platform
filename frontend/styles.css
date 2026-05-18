@@ -1,0 +1,254 @@
+/* ── Design tokens — change one value, update the whole UI ────────────────── */
+:root {
+  --bg:          #0e1117;
+  --panel:       #161b22;
+  --panel-2:     #1c2330;
+  --border:      #2a3140;
+  --text:        #e6edf3;
+  --text-dim:    #8b949e;
+  --green:       #2ea043;
+  --green-soft:  #1a3a23;
+  --red:         #f85149;
+  --red-soft:    #3d1d1d;
+  --yellow:      #d29922;
+  --yellow-soft: #2a2a1a;
+  --blue:        #58a6ff;
+  --accent:      #7c3aed;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+h1 { font-size: 22px; }
+.sub { color: var(--text-dim); font-size: 13px; }
+
+/* ── Tab nav ─────────────────────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--panel-2);
+  padding: 4px;
+  border-radius: 8px;
+}
+.tabs button {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 500;
+}
+.tabs button.active { background: var(--blue); color: #06121f; font-weight: 600; }
+
+/* ── Panel ───────────────────────────────────────────────────────────────── */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.btn {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+  transition: background .1s;
+}
+.btn:hover { background: #242c3a; }
+.btn.active { background: var(--blue); border-color: var(--blue); color: #06121f; font-weight: 600; }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+
+/* ── Form controls ───────────────────────────────────────────────────────── */
+.input {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  font-family: inherit;
+}
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+/* ── Section headings ────────────────────────────────────────────────────── */
+h2 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.small-text { font-size: 12px; color: var(--text-dim); }
+
+/* ── Signal banner ───────────────────────────────────────────────────────── */
+.signal-banner {
+  text-align: center;
+  padding: 22px;
+  border-radius: 10px;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.signal-banner.buy  { background: var(--green-soft);  color: var(--green);  border: 2px solid var(--green);  }
+.signal-banner.sell { background: var(--red-soft);    color: var(--red);    border: 2px solid var(--red);    }
+.signal-banner.hold { background: var(--yellow-soft); color: var(--yellow); border: 2px solid var(--yellow); }
+.signal-conf { font-size: 13px; color: var(--text-dim); margin-top: 6px; font-weight: normal; letter-spacing: 0; }
+
+/* ── Signal pill ─────────────────────────────────────────────────────────── */
+.pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .4px;
+}
+.pill.buy  { background: var(--green-soft); color: var(--green); }
+.pill.sell { background: var(--red-soft);   color: var(--red);   }
+.pill.hold { background: var(--yellow-soft); color: var(--yellow); }
+
+/* ── Summary bar ─────────────────────────────────────────────────────────── */
+.summary-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.sum-card { background: var(--panel-2); padding: 12px; border-radius: 6px; text-align: center; }
+.sum-card .v { font-size: 22px; font-weight: 700; }
+.sum-card .label { color: var(--text-dim); font-size: 11px; text-transform: uppercase; margin-top: 2px; }
+
+/* ── Stats grid (backtest) ───────────────────────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+.stat-card { background: var(--panel-2); padding: 12px; border-radius: 6px; }
+.stat-card .label { color: var(--text-dim); font-size: 11px; text-transform: uppercase; }
+.stat-card .v { font-size: 18px; font-weight: 600; margin-top: 4px; }
+
+/* ── Indicator tiles ─────────────────────────────────────────────────────── */
+.indicator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+.indicator { background: var(--panel-2); padding: 10px 12px; border-radius: 6px; }
+.indicator .label { color: var(--text-dim); font-size: 11px; text-transform: uppercase; }
+.indicator .v { font-size: 18px; font-weight: 600; margin-top: 2px; }
+
+/* ── Price row ───────────────────────────────────────────────────────────── */
+.price-row { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+.price { font-size: 32px; font-weight: 700; }
+.change { font-size: 16px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+.change.up   { background: var(--green-soft); color: var(--green); }
+.change.down { background: var(--red-soft);   color: var(--red);   }
+
+/* ── Chart ───────────────────────────────────────────────────────────────── */
+.chart-wrap { position: relative; height: 300px; }
+
+/* ── AI Insight panel ────────────────────────────────────────────────────── */
+.insight-panel {
+  background: linear-gradient(135deg, rgba(124,58,237,.08), rgba(88,166,255,.06)), var(--panel);
+  border: 1px solid rgba(124,58,237,.35);
+}
+.insight-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.insight-badge {
+  background: rgba(124,58,237,.22);
+  color: #b294f7;
+  padding: 4px 11px;
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  border: 1px solid rgba(124,58,237,.35);
+}
+.insight-narrative { font-size: 14px; line-height: 1.65; color: #d4dbe3; }
+.insight-narrative p { margin-bottom: 10px; }
+.insight-narrative p:last-child { margin-bottom: 0; }
+.insight-narrative strong { color: var(--text); }
+.insight-narrative em { color: var(--text-dim); }
+.insight-narrative code { background: var(--panel-2); padding: 1px 5px; border-radius: 3px; font-size: 12px; color: #b294f7; }
+.pos { color: var(--green); }
+.neg { color: var(--red); }
+.neutral { color: var(--yellow); }
+
+/* ── Table ───────────────────────────────────────────────────────────────── */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); }
+th { color: var(--text-dim); font-weight: 600; text-transform: uppercase; font-size: 11px; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.up   { color: var(--green); }
+.down { color: var(--red); }
+tbody tr.clickable { cursor: pointer; }
+tbody tr.clickable:hover { background: rgba(88,166,255,.06); }
+
+/* ── Misc ────────────────────────────────────────────────────────────────── */
+.loading { color: var(--text-dim); padding: 20px; text-align: center; }
+.spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.err { background: var(--red-soft); color: var(--red); padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; }
+.hidden { display: none; }
+
+.disclaimer {
+  background: #2a1d12;
+  border: 1px solid #6a4520;
+  color: #f0c990;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-top: 14px;
+}
+
+@media (max-width: 700px) {
+  .price { font-size: 26px; }
+  .signal-banner { font-size: 24px; padding: 16px; }
+  th, td { padding: 8px 6px; font-size: 12px; }
+  .hide-mobile { display: none; }
+}

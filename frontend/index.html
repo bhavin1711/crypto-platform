@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crypto Market Intelligence Platform</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Chart.js — loaded from CDN, no build step required -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <header>
+    <div>
+      <h1>Crypto Market Intelligence Platform</h1>
+      <p class="sub">AI-assisted signal analysis · SMA trend detection · decision-support analytics</p>
+    </div>
+    <nav class="tabs">
+      <button id="tab-scanner"  class="active" onclick="switchTab('scanner')">Scanner</button>
+      <button id="tab-chart"    onclick="switchTab('chart')">Chart</button>
+      <button id="tab-backtest" onclick="switchTab('backtest')">Backtest</button>
+    </nav>
+  </header>
+
+  <div id="global-error" class="err hidden"></div>
+
+  <!-- ================================================================== -->
+  <!-- SCANNER TAB                                                          -->
+  <!-- ================================================================== -->
+  <div id="view-scanner">
+
+    <!-- Controls -->
+    <div class="panel">
+      <div class="row" style="margin-bottom:14px">
+        <span class="small-text">Timeframe:</span>
+        <button class="btn btn-sm scan-tf active" data-tf="1h">1h</button>
+        <button class="btn btn-sm scan-tf active" data-tf="4h">4h</button>
+        <button class="btn btn-sm scan-tf" data-tf="1d">1d</button>
+
+        <span class="small-text" style="margin-left:12px">Show:</span>
+        <button class="btn btn-sm scan-filter active" data-f="all">All</button>
+        <button class="btn btn-sm scan-filter" data-f="buy">Buy only</button>
+        <button class="btn btn-sm scan-filter" data-f="sell">Sell only</button>
+
+        <input id="scan-search" class="input" style="width:180px" placeholder="Filter symbol (e.g. SOL)" oninput="renderScanResults()" />
+        <button class="btn btn-sm" style="margin-left:auto" onclick="loadScan(true)">Refresh</button>
+      </div>
+
+      <!-- Summary bar -->
+      <div class="summary-bar" id="scan-summary"></div>
+    </div>
+
+    <!-- AI Market Insight -->
+    <div class="panel insight-panel">
+      <div class="insight-header">
+        <span class="insight-badge">⚡ AI Market Intelligence</span>
+        <span class="small-text" id="scan-insight-meta">Run a scan to generate commentary</span>
+      </div>
+      <div class="insight-narrative" id="scan-insight">
+        <p class="small-text">Run a scan to generate market breadth commentary.</p>
+      </div>
+    </div>
+
+    <!-- Results table -->
+    <div class="panel">
+      <h2>Signal Scan Results</h2>
+      <div id="scan-loading" class="loading hidden"><span class="spinner"></span>Scanning markets…</div>
+      <div id="scan-table-wrap">
+        <table id="scan-table">
+          <thead>
+            <tr>
+              <th>Symbol</th>
+              <th>Signal</th>
+              <th class="num">Price</th>
+              <th class="num">24h %</th>
+              <th class="hide-mobile">Reason</th>
+              <th class="num hide-mobile">Volume</th>
+            </tr>
+          </thead>
+          <tbody id="scan-body"></tbody>
+        </table>
+      </div>
+      <p class="small-text" style="margin-top:10px">
+        Signal = SMA trend alignment: BUY when Price &gt; SMA20 &gt; SMA50 · SELL when reversed · HOLD otherwise.
+        Click a row to open the chart.
+      </p>
+    </div>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- CHART TAB                                                            -->
+  <!-- ================================================================== -->
+  <div id="view-chart" class="hidden">
+
+    <!-- Symbol + timeframe controls -->
+    <div class="panel">
+      <div class="row" style="margin-bottom:14px">
+        <span class="small-text">Timeframe:</span>
+        <button class="btn btn-sm chart-tf" data-tf="1h">1h</button>
+        <button class="btn btn-sm chart-tf active" data-tf="4h">4h</button>
+        <button class="btn btn-sm chart-tf" data-tf="1d">1d</button>
+        <button class="btn btn-sm" style="margin-left:auto" onclick="loadChart()">Refresh</button>
+      </div>
+      <div class="row" style="margin-bottom:14px">
+        <input id="chart-sym-input" class="input" style="width:180px" placeholder="BTC, ETH, SOL…" />
+        <button class="btn btn-sm" onclick="loadChartForInput()">Load</button>
+        <span class="small-text">Quick:</span>
+        <button class="btn btn-sm" onclick="setChartSym('BTC')">BTC</button>
+        <button class="btn btn-sm" onclick="setChartSym('ETH')">ETH</button>
+        <button class="btn btn-sm" onclick="setChartSym('SOL')">SOL</button>
+        <button class="btn btn-sm" onclick="setChartSym('BNB')">BNB</button>
+        <button class="btn btn-sm" onclick="setChartSym('XRP')">XRP</button>
+      </div>
+
+      <div class="price-row" id="chart-price-row" style="display:none">
+        <div class="price" id="chart-price">—</div>
+        <div class="change" id="chart-change">—</div>
+        <span class="small-text" id="chart-hl"></span>
+      </div>
+      <div class="small-text" id="chart-header"></div>
+    </div>
+
+    <!-- Signal banner -->
+    <div class="panel">
+      <h2>Decision-Support Signal</h2>
+      <div class="signal-banner hold" id="chart-signal-banner">
+        —
+        <div class="signal-conf" id="chart-signal-conf"></div>
+      </div>
+      <div class="indicator-grid" id="chart-indicators" style="margin-top:14px"></div>
+      <p class="small-text" style="margin-top:10px">
+        BUY = Price &gt; SMA20 &gt; SMA50 · SELL = Price &lt; SMA20 &lt; SMA50 · HOLD = otherwise.
+        Decision support — not financial advice.
+      </p>
+    </div>
+
+    <!-- AI Signal Insight -->
+    <div class="panel insight-panel">
+      <div class="insight-header">
+        <span class="insight-badge">⚡ AI Signal Interpretation</span>
+        <span class="small-text" id="chart-insight-meta"></span>
+      </div>
+      <div class="insight-narrative" id="chart-insight">
+        <p class="small-text">Load a symbol to generate analyst commentary.</p>
+      </div>
+    </div>
+
+    <!-- Price + SMA chart -->
+    <div class="panel">
+      <h2>Price + SMA20 + SMA50</h2>
+      <div id="chart-loading" class="loading hidden"><span class="spinner"></span>Loading chart data…</div>
+      <div class="chart-wrap"><canvas id="price-chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- ================================================================== -->
+  <!-- BACKTEST TAB                                                          -->
+  <!-- ================================================================== -->
+  <div id="view-backtest" class="hidden">
+
+    <div class="panel">
+      <h2>Backtest the SMA Strategy</h2>
+      <p class="small-text" style="margin-bottom:14px">
+        Simulates a bot following BUY/SELL signals over historical data.
+        Starts with $100, applies 0.1% fee per trade, compares against buy-and-hold.
+        No lookahead bias — signal at each point uses only past data.
+      </p>
+      <div class="row" style="margin-bottom:10px">
+        <span class="small-text">Symbol:</span>
+        <input id="bt-sym" class="input" style="width:140px" placeholder="BTC, ETH…" value="BTC" />
+        <span class="small-text">Quick:</span>
+        <button class="btn btn-sm" onclick="setBtSym('BTC')">BTC</button>
+        <button class="btn btn-sm" onclick="setBtSym('ETH')">ETH</button>
+        <button class="btn btn-sm" onclick="setBtSym('SOL')">SOL</button>
+      </div>
+      <div class="row" style="margin-bottom:14px">
+        <span class="small-text">Timeframe:</span>
+        <button class="btn btn-sm bt-tf" data-tf="1h">1h</button>
+        <button class="btn btn-sm bt-tf active" data-tf="4h">4h</button>
+        <button class="btn btn-sm bt-tf" data-tf="1d">1d</button>
+        <button class="btn" style="margin-left:auto" onclick="loadBacktest()">Run Backtest</button>
+      </div>
+    </div>
+
+    <div id="bt-loading" class="loading hidden"><span class="spinner"></span>Running simulation…</div>
+    <div id="bt-error" class="err hidden"></div>
+
+    <div id="bt-results" class="hidden">
+      <div class="panel">
+        <h2>Result</h2>
+        <div class="signal-banner" id="bt-verdict">—
+          <div class="signal-conf" id="bt-sub"></div>
+        </div>
+        <div class="stats-grid" id="bt-stats"></div>
+        <p class="small-text">
+          Past results do not guarantee future performance. The SMA strategy is intentionally
+          simple — this backtest demonstrates the pipeline, not a production algorithm.
+        </p>
+      </div>
+
+      <div class="panel">
+        <h2>Trade Log</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Type</th>
+              <th class="num">Price</th>
+              <th class="num">SMA20</th>
+              <th class="num">SMA50</th>
+              <th class="num">Portfolio</th>
+            </tr>
+          </thead>
+          <tbody id="bt-trades"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Disclaimer ─────────────────────────────────────────────────────── -->
+  <div class="disclaimer">
+    <strong>Decision support, not financial advice.</strong>
+    This platform uses SMA-based trend analysis to support informed decisions — it does not predict
+    prices or recommend trades. Technical signals describe historical patterns, not future outcomes.
+    Backtest results reflect past conditions and may not generalise forward.
+  </div>
+
+</div><!-- .shell -->
+<script src="app.js"></script>
+</body>
+</html>
