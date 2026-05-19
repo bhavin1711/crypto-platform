@@ -6,14 +6,12 @@ def test_sma_calculation():
 
     result = sma(prices, 5)
 
-    assert result == 3
+    assert result[-1] == 3.0
 
 
 def test_buy_signal():
-    signal = compute_signal(
-        price=110,
-        sma20=100,
-        sma50=90
-    )
+    closes = list(range(1, 60))
 
-    assert signal == "BUY"
+    result = compute_signal(closes)
+
+    assert result["signal"] == "BUY"
