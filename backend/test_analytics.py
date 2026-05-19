@@ -1,4 +1,6 @@
 from analytics import sma, compute_signal
+
+
 def test_sma_calculation():
     prices = [1, 2, 3, 4, 5]
 
