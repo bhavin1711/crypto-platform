@@ -22,11 +22,22 @@ jobs:
         run: |
           cd backend
           pip install -r requirements.txt
+          pip install pytest flake8
 
-      - name: Validate backend
+      - name: Run backend syntax validation
         run: |
           cd backend
           python -m py_compile main.py
+
+      - name: Run code quality checks
+        run: |
+          cd backend
+          flake8 .
+
+      - name: Run unit tests
+        run: |
+          cd backend
+          pytest
 
   frontend:
     runs-on: ubuntu-latest
