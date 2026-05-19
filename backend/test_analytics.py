@@ -17,3 +17,4 @@ def test_buy_signal():
     )
 
     assert signal == "BUY"
+    
