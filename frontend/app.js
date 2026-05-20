@@ -1,25 +1,3 @@
-/*
-  app.js — Frontend Application Logic
-  =====================================
-  Vanilla JS SPA — no build step, no framework, no bundler.
-
-  Interview talking point:
-    "I chose vanilla JS deliberately. The frontend's only job is to call
-    the backend API and render results. There's no complex state management,
-    no routing library, no component lifecycle to explain. If this grew into
-    a team product I'd migrate to React — but for a portfolio demo this is
-    the most explainable choice and it loads instantly."
-
-  Data flow (one direction, always):
-    User action → API call → render result
-    The frontend never computes signals or generates insight text —
-    that's the backend's job.
-
-  Architecture: three tabs, each with its own load/render pair.
-    loadScan()     → renderScanResults()
-    loadChart()    → renderChart()
-    loadBacktest() → renderBacktest()
-*/
 
 // ── Configuration ─────────────────────────────────────────────────────────────
 // In production: set window.API_BASE to your Azure App Service URL before

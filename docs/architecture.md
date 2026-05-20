@@ -295,20 +295,3 @@ Push to main branch
 | When to change | Adding RSI is additive — one function in analytics.py |
 
 ---
-
-## 10. Interview Answer Templates
-
-**"Walk me through the architecture."**
-> "It's a three-tier web application. The frontend is static HTML and JavaScript — its only job is to call the API and render results, no business logic. The backend is FastAPI — it owns the pipeline: fetch market data from Binance, run the SMA analytics engine, and generate insight text. The AI layer sits inside the backend as a module — today it's rule-based NLG, but the interface is identical to what an LLM call would look like, so swapping it in is a one-function change with zero impact on the frontend."
-
-**"Why is the algorithm so simple?"**
-> "Intentionally. The interview focus is architecture — clean data flow, separation of concerns, cloud-readiness — not quant finance. A simple algorithm means every design choice is explainable and the logic is verifiable by hand. Adding RSI would take ten minutes and it's additive — I can show exactly where it would slot in."
-
-**"How would you scale this?"**
-> "Two changes cover 90% of the scaling story. First, decouple ingestion from queries — replace the inline Binance fetch with an Azure Function on a timer that writes candles to a time-series store. The API reads from the store instead of calling Binance on every request. That fixes latency, cost, and rate-limit exposure in one move. Second, add Redis caching in front of the signal and insight endpoints — same symbol and timeframe within a 60-second window gets served from cache."
-
-**"Where would the LLM fit in?"**
-> "It already has a reserved seat. The insight module has one public function — `generate()` — that takes a signal snapshot and returns a string. Today the body uses rules. I replace it with an async OpenAI call, passing the snapshot as structured JSON in the user message. The route, the API endpoint URL, and the frontend are completely unchanged. The API key stays server-side so it never touches the browser. I'd add Redis caching keyed on the signal hash to avoid paying for duplicate narratives."
-
-**"Why FastAPI over Flask?"**
-> "FastAPI gives me two things Flask doesn't out of the box: async support, which matters when I'm making parallel Binance calls across 30 pairs in the scanner, and auto-generated OpenAPI docs at /docs. In this demo I can open /docs and live-demo every endpoint without Postman. Flask would have required manually writing the Swagger spec."

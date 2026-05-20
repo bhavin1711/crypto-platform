@@ -1,23 +1,3 @@
-"""
-analytics.py — Analytics Engine
-=================================
-Pure mathematical functions. No I/O, no side effects, no framework imports.
-
-Interview talking points:
-  "Every function here is pure — same input always gives the same output.
-  That means I can write unit tests with zero mocking. I pass in a list
-  of closing prices and assert the output. No database, no HTTP, no fixtures."
-
-  "The algorithm is intentionally simple: two moving averages, three outcomes.
-  The simplicity is a feature. In a technical interview I can explain the entire
-  algorithm in one sentence. The complexity is in the architecture and pipelines,
-  not the math."
-
-Signal logic:
-  BUY  → Price > SMA20 > SMA50   (uptrend: short MA above long MA, price leading)
-  SELL → Price < SMA20 < SMA50   (downtrend: inverse of above)
-  HOLD → anything else            (consolidation or transition)
-"""
 
 from typing import Optional
 

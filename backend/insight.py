@@ -1,37 +1,3 @@
-"""
-insight.py — AI Insight Layer
-==============================
-Generates analyst-style prose from signal data.
-
-Current implementation: deterministic rule-based NLG.
-  → Zero cost, zero latency, no external dependencies, 100% testable.
-
-Future implementation: swap the body of generate() to call an LLM.
-  The caller (main.py route) and the frontend never change.
-
-Interview talking points:
-  "This is the AI seam. The public interface is one function: generate().
-  It takes a signal snapshot and returns a string of HTML prose.
-  Today it uses rules. When I'm ready to use Claude or GPT-4, I replace
-  the function body with an API call and pass the snapshot as structured
-  JSON in the user message. The route, endpoint URL, and frontend are
-  completely unchanged — that's the value of the seam."
-
-  "I chose rule-based first because it ships instantly, costs nothing,
-  and is fully deterministic which makes testing trivial. I can add
-  the LLM later without touching any other file."
-
-  LLM migration (drop-in replacement):
-    async def generate(...) -> str:
-        response = await openai.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {"role": "user",   "content": json.dumps(signal)},
-            ]
-        )
-        return response.choices[0].message.content
-"""
 
 from typing import Optional
 

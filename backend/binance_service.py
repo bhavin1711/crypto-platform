@@ -1,22 +1,4 @@
-"""
-binance_service.py — Data Ingestion Layer
-==========================================
-All external HTTP calls to Binance live here and nowhere else.
-Provides primary/fallback failover: binance.com → binance.us.
 
-Interview talking point:
-  "In a production system, this module would be replaced by a scheduled
-  ingestion job — an Azure Function on a timer that pulls candles every
-  few minutes and writes them to a time-series store. The API would then
-  read from the store instead of calling Binance on every request.
-  That change decouples ingestion latency from query latency and removes
-  rate-limit exposure. But for an MVP, calling the API directly is fine."
-
-Why a separate module?
-  - All network I/O is in one place → easy to mock in tests
-  - Swapping data providers (CoinGecko, paid feed) = change this file only
-  - Failover logic lives here, not scattered across routes
-"""
 
 import httpx
 from typing import Optional
