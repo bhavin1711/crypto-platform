@@ -57,10 +57,6 @@ async def scan(interval: str = "4h", limit: int = Query(default=30, le=50)):
     Returns the top `limit` liquid USDT pairs ranked by signal strength.
     Fetches candles for each pair and computes the SMA signal in parallel.
 
-    Interview talking point:
-      "In a production version this endpoint would read from a cache (Redis)
-       that an ingestion job keeps warm. Right now it calls Binance directly,
-       which is fine for an MVP but would hit rate limits at scale."
     """
     try:
         pairs = await binance.get_top_pairs(limit=limit)
@@ -120,7 +116,7 @@ async def signal(symbol: str, interval: str = "4h"):
         raise HTTPException(status_code=502, detail=str(e))
 
 
-# ── AI Insight ────────────────────────────────────────────────────────────────
+# ── AI Insight ───────────────────────────────────────────────────────────────
 
 @app.get("/insight/{symbol}")
 async def get_insight(symbol: str, interval: str = "4h"):
