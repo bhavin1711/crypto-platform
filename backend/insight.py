@@ -50,6 +50,7 @@ def generate(
     ]
     return "".join(paragraphs)
 
+
 # Summarises BUY, HOLD and SELL signals across the scanned market.
 def generate_market_breadth(results: list[dict]) -> str:
     """Generate market-breadth commentary from scanner results."""
@@ -127,9 +128,11 @@ _POSTURE_MAP = {
     },
 }
 
+
 # Maps BUY, SELL or HOLD to a human-readable market posture.
 def _posture(sig: str) -> dict:
     return _POSTURE_MAP.get(sig, _POSTURE_MAP["HOLD"])
+
 
 # Explains the trend using the price and SMA20/SMA50 relationship.
 def _trend_text(sig: str, price, s20, s50, base: str, timeframe: str) -> str:
@@ -157,6 +160,7 @@ def _trend_text(sig: str, price, s20, s50, base: str, timeframe: str) -> str:
         f"trend transition — not yet a clear directional setup."
     )
 
+
 # Converts the signal into simple decision-support language.
 def _action_text(sig: str) -> str:
     if sig == "BUY":
@@ -167,6 +171,7 @@ def _action_text(sig: str) -> str:
                 "Downtrend alignment argues against new long exposure.")
     return ("Conditions favor <strong>patience</strong>. "
             "No clear directional edge — waiting for trend alignment to develop is rational.")
+
 
 # Classifies short-term volatility from the 24-hour price movement.
 def _risk_text(change_24h: float) -> str:

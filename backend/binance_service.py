@@ -6,12 +6,14 @@ from typing import Optional
 PRIMARY  = "https://api.binance.com"
 FALLBACK = "https://api.binance.us"
 
+
 # Stablecoins and leveraged tokens we don't want in the scanner
 _STABLECOIN_BASES = {
     "USDC", "BUSD", "FDUSD", "TUSD", "DAI", "USDP", "USTC",
     "GUSD", "SUSD", "FRAX", "PAXG", "EURT", "EUR", "GBP", "TRY",
 }
 _LEV_SUFFIXES = ("UPUSDT", "DOWNUSDT", "BULLUSDT", "BEARUSDT")
+
 
 # Sends an async request to Binance, using the primary API first and the fallback API if it fails.
 async def _fetch(path: str) -> dict | list:
@@ -27,6 +29,7 @@ async def _fetch(path: str) -> dict | list:
                 errors.append(f"{base}: {e}")
     raise RuntimeError(f"Binance unreachable: {' | '.join(errors)}")
 
+
 # Gets historical candle data from Binance and converts it into a clean format for the rest of the application.
 async def get_candles(symbol: str, interval: str, limit: int = 200) -> list[dict]:
     """Return normalised candles, oldest first."""
@@ -36,6 +39,7 @@ async def get_candles(symbol: str, interval: str, limit: int = 200) -> list[dict
          "low": float(k[3]), "close": float(k[4]), "volume": float(k[5])}
         for k in raw
     ]
+
 
 # Gets the latest market information for a cryptocurrency, including price, 24-hour change, high, low and volume.
 async def get_ticker(symbol: str) -> dict:
@@ -49,6 +53,7 @@ async def get_ticker(symbol: str) -> dict:
         "lowPrice":            float(raw["lowPrice"]),
         "quoteVolume":         float(raw["quoteVolume"]),
     }
+
 
 # Finds the most active USDT trading pairs by filtering out stablecoins and leveraged tokens, then sorting by trading volume.
 async def get_top_pairs(limit: int = 30) -> list[dict]:
