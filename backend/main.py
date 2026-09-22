@@ -12,8 +12,8 @@ app = FastAPI(
     version="1.0.0",
 )
 
+
 # CORS: allow all origins in development.
-# In production, restrict to your Azure Static Web App URL.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -59,7 +59,7 @@ async def scan(interval: str = "4h", limit: int = Query(default=30, le=50)):
 # Retrieves historical price data and calculates the SMA series and trading signal for the chart.
 @app.get("/signal/{symbol}")
 async def signal(symbol: str, interval: str = "4h"):
-    
+
     sym = symbol.upper() + ("USDT" if not symbol.upper().endswith("USDT") else "")
     try:
         candles = await binance.get_candles(sym, interval, limit=200)
