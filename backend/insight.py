@@ -1,6 +1,7 @@
 
 from typing import Optional
 
+
 # Converts structured signal data into human-readable analyst-style commentary.
 def generate(
     base: str,
