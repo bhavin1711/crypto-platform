@@ -13,7 +13,7 @@ _STABLECOIN_BASES = {
 }
 _LEV_SUFFIXES = ("UPUSDT", "DOWNUSDT", "BULLUSDT", "BEARUSDT")
 
-
+# Sends an async request to Binance, using the primary API first and the fallback API if it fails.
 async def _fetch(path: str) -> dict | list:
     """Try PRIMARY, fall back to FALLBACK on any error."""
     errors = []
@@ -27,9 +27,9 @@ async def _fetch(path: str) -> dict | list:
                 errors.append(f"{base}: {e}")
     raise RuntimeError(f"Binance unreachable: {' | '.join(errors)}")
 
-
+# Gets historical candle data from Binance and converts it into a clean format for the rest of the application.
 async def get_candles(symbol: str, interval: str, limit: int = 200) -> list[dict]:
-    """Return normalised OHLCV candles, oldest first."""
+    """Return normalised candles, oldest first."""
     raw = await _fetch(f"/api/v3/klines?symbol={symbol}&interval={interval}&limit={limit}")
     return [
         {"time": k[0], "open": float(k[1]), "high": float(k[2]),
@@ -37,7 +37,7 @@ async def get_candles(symbol: str, interval: str, limit: int = 200) -> list[dict
         for k in raw
     ]
 
-
+# Gets the latest market information for a cryptocurrency, including price, 24-hour change, high, low and volume.
 async def get_ticker(symbol: str) -> dict:
     """Return 24h ticker for a single symbol."""
     raw = await _fetch(f"/api/v3/ticker/24hr?symbol={symbol}")
@@ -50,7 +50,7 @@ async def get_ticker(symbol: str) -> dict:
         "quoteVolume":         float(raw["quoteVolume"]),
     }
 
-
+# Finds the most active USDT trading pairs by filtering out stablecoins and leveraged tokens, then sorting by trading volume.
 async def get_top_pairs(limit: int = 30) -> list[dict]:
     """Return the top liquid USDT pairs by 24h volume, filtered for quality."""
     raw = await _fetch("/api/v3/ticker/24hr")

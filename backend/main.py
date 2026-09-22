@@ -1,22 +1,3 @@
-"""
-main.py — FastAPI entry point
-==============================
-Owns three things: middleware setup, route definitions, and error handling.
-Each route is thin — it delegates to a service module and returns the result.
-
-Interview talking point:
-  "I deliberately kept each route to 4-6 lines. The route's job is to
-  parse the request and call the right service — not to do work itself.
-  This makes the app easy to test: you can call analytics.compute_signal()
-  directly without needing an HTTP client."
-
-API surface:
-  GET /health            → liveness probe (used by Azure App Service)
-  GET /scan              → scanner: top pairs ranked by signal
-  GET /signal/{symbol}   → chart data: candles + SMA series + signal
-  GET /insight/{symbol}  → AI narrative for a single symbol
-  GET /backtest/{symbol} → walk-forward simulation result
-"""
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -42,7 +23,7 @@ app.add_middleware(
 
 
 # ── Health ────────────────────────────────────────────────────────────────────
-
+# Checks whether the API is running and responding.
 @app.get("/health")
 def health():
     """Liveness probe — Azure App Service pings this to verify the app is running."""
@@ -50,14 +31,10 @@ def health():
 
 
 # ── Scanner ───────────────────────────────────────────────────────────────────
-
+# Scans the most liquid USDT pairs and generates a BUY, HOLD or SELL signal for each.
 @app.get("/scan")
 async def scan(interval: str = "4h", limit: int = Query(default=30, le=50)):
-    """
-    Returns the top `limit` liquid USDT pairs ranked by signal strength.
-    Fetches candles for each pair and computes the SMA signal in parallel.
 
-    """
     try:
         pairs = await binance.get_top_pairs(limit=limit)
         results = []
@@ -79,18 +56,10 @@ async def scan(interval: str = "4h", limit: int = Query(default=30, le=50)):
 
 
 # ── Signal (chart view) ───────────────────────────────────────────────────────
-
+# Retrieves historical price data and calculates the SMA series and trading signal for the chart.
 @app.get("/signal/{symbol}")
 async def signal(symbol: str, interval: str = "4h"):
-    """
-    Returns the SMA signal + full price/SMA series for chart rendering.
-    One call gives the frontend everything it needs to draw the chart.
-
-    Interview talking point:
-      "The frontend never does any math. It calls this endpoint and renders
-       whatever comes back. That means the analytics logic has one home —
-       analytics.py — and the frontend is a pure presentation layer."
-    """
+    
     sym = symbol.upper() + ("USDT" if not symbol.upper().endswith("USDT") else "")
     try:
         candles = await binance.get_candles(sym, interval, limit=200)
@@ -117,18 +86,10 @@ async def signal(symbol: str, interval: str = "4h"):
 
 
 # ── AI Insight ───────────────────────────────────────────────────────────────
-
+# Generates human-readable market commentary from the calculated signal and market data.
 @app.get("/insight/{symbol}")
 async def get_insight(symbol: str, interval: str = "4h"):
-    """
-    Generates analyst-style commentary for a symbol.
-    Today: rule-based NLG. Future: OpenAI/Anthropic with same response shape.
 
-    Interview talking point:
-      "The insight module is the AI seam. The route just calls
-       insight.generate() and returns the string. When I swap the
-       implementation from rules to an LLM, this route never changes."
-    """
     sym = symbol.upper() + ("USDT" if not symbol.upper().endswith("USDT") else "")
     try:
         candles = await binance.get_candles(sym, interval, limit=200)
@@ -149,17 +110,10 @@ async def get_insight(symbol: str, interval: str = "4h"):
 
 
 # ── Backtest ──────────────────────────────────────────────────────────────────
-
+# Runs the SMA strategy against historical data and compares it with buy-and-hold performance.
 @app.get("/backtest/{symbol}")
 async def backtest(symbol: str, interval: str = "4h"):
-    """
-    Walk-forward simulation of the SMA signal strategy.
-    Starts with $100, 0.1% fee per trade, compares vs buy-and-hold.
 
-    Interview talking point:
-      "Backtesting runs server-side so the frontend receives a compact
-       result object — not 500 rows of candle data. The client stays thin."
-    """
     sym = symbol.upper() + ("USDT" if not symbol.upper().endswith("USDT") else "")
     try:
         candles = await binance.get_candles(sym, interval, limit=500)

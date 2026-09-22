@@ -1,7 +1,7 @@
 
 from typing import Optional
 
-
+# Calculates the moving average efficiently using a sliding window and running sum.
 def sma(values: list[float], period: int) -> list[Optional[float]]:
     """
     Simple Moving Average. Returns None for positions before the first full window.
@@ -16,7 +16,7 @@ def sma(values: list[float], period: int) -> list[Optional[float]]:
         result.append(total / period if i >= period - 1 else None)
     return result
 
-
+# Calculates SMA20/SMA50 and generates a BUY, SELL or HOLD signal based on price alignment.
 def compute_signal(closes: list[float]) -> dict:
     """
     Compute the BUY / SELL / HOLD signal from a list of closing prices.
@@ -64,7 +64,7 @@ def compute_signal(closes: list[float]) -> dict:
         "reason": "Moving averages not in clear alignment — consolidation or transition",
     }
 
-
+# Simulates the strategy on historical data while avoiding look-ahead bias and applying trading fees.
 def run_backtest(closes: list[float]) -> dict:
     """
     Walk-forward simulation of the SMA signal strategy.
@@ -87,7 +87,7 @@ def run_backtest(closes: list[float]) -> dict:
     START_IDX   = 55  # skip until we have enough data for SMA50
 
     for i in range(START_IDX, len(closes)):
-        sig   = compute_signal(closes[: i + 1])
+        sig   = compute_signal(closes[: i + 1]) # Only use data available up to this point to prevent look-ahead bias.
         price = closes[i]
         label = sig["signal"]
 

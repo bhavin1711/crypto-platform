@@ -1,7 +1,7 @@
 
 from typing import Optional
 
-
+# Converts structured signal data into human-readable analyst-style commentary.
 def generate(
     base: str,
     timeframe: str,
@@ -49,7 +49,7 @@ def generate(
     ]
     return "".join(paragraphs)
 
-
+# Summarises BUY, HOLD and SELL signals across the scanned market.
 def generate_market_breadth(results: list[dict]) -> str:
     """Generate market-breadth commentary from scanner results."""
     if not results:
@@ -126,11 +126,11 @@ _POSTURE_MAP = {
     },
 }
 
-
+# Maps BUY, SELL or HOLD to a human-readable market posture.
 def _posture(sig: str) -> dict:
     return _POSTURE_MAP.get(sig, _POSTURE_MAP["HOLD"])
 
-
+# Explains the trend using the price and SMA20/SMA50 relationship.
 def _trend_text(sig: str, price, s20, s50, base: str, timeframe: str) -> str:
     if s20 is None or s50 is None:
         return "Insufficient data to assess trend structure."
@@ -156,7 +156,7 @@ def _trend_text(sig: str, price, s20, s50, base: str, timeframe: str) -> str:
         f"trend transition — not yet a clear directional setup."
     )
 
-
+# Converts the signal into simple decision-support language.
 def _action_text(sig: str) -> str:
     if sig == "BUY":
         return ("Conditions favor <strong>watchlist activation</strong>. "
@@ -167,7 +167,7 @@ def _action_text(sig: str) -> str:
     return ("Conditions favor <strong>patience</strong>. "
             "No clear directional edge — waiting for trend alignment to develop is rational.")
 
-
+# Classifies short-term volatility from the 24-hour price movement.
 def _risk_text(change_24h: float) -> str:
     abs_chg = abs(change_24h)
     pct = f"{'+'if change_24h >= 0 else ''}{change_24h:.2f}%"
